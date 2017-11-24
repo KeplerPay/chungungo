@@ -2,11 +2,12 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from bitcoinrpc.authproxy import AuthServiceProxy
 from random import seed, randint
 from os import urandom
-import hashlib, logging
 from config import *
 from urllib.request import urlopen
 from json import load
 import codecs
+import hashlib, logging
+import requests
 
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -163,19 +164,24 @@ def address(bot, update):
 
 # Lectura de precio de mercado
 def precio(bot, update):
-	web = urlopen('https://www.southxchange.com/api/price/cha/btc')
-	reader = codecs.getreader("utf-8")
-	api = load(reader(web))
+	exchange = requests.get('https://www.southxchange.com/api/price/cha/btc').json()
 
-	bid = '{0:.8f} CHA'.format(api['Bid'])
-	ask = '{0:.8f} CHA'.format(api['Ask'])
-	var = api['Variation24Hr']
+	surbtc = requests.get('https://www.surbtc.com/api/v2/markets/btc-clp/ticker.json').json()
+	clp = float(surbtc['ticker']['last_price'][0])
 
-	msg = 'Precio de compra: %s\nPrecio de venta: %s\nVariación (24h): %s' % (ask, bid, var)
+	ask = '{0:.8f} BTC'.format(exchange['Ask'])
+	bid = '{0:.8f} BTC'.format(exchange['Bid'])
+
+	askClp = '{0:.8f} CLP'.format(exchange['Ask'] * clp)
+	bidClp = '{0:.8f} CLP'.format(exchange['Bid'] * clp)
+
+	variation = exchange['Variation24Hr']
+
+	msg = 'Precio de compra: %s\n\t\t  %s\n\nPrecio de venta:  %s\n\t\t  %s\n\nVariación (24h):  %s' % (ask, askClp, bid, bidClp, variation)
 	msg += '%'
 
 	logger.info("precio() => %s" % msg.replace('\n',' // '))
-	update.message.reply_text("%s" % msg)	
+	update.message.reply_text("%s" % msg)
 
 
 # Mostrar balance de usuario
