@@ -1,7 +1,7 @@
 # Configuración RPC
 RPCuser = ""
 RPCpassword = ""
-RPCport = 21662
+RPCport = 12101 #testnet 12201
 
 # Token del Bot de Telegram
 token = ""

@@ -29,14 +29,14 @@ def getaddress(name):
 def start(bot, update):
 	user = update.message.from_user
 
-	msg = "Holi, soy Quirquincho :D"
-	msg += "\nPuedes interactuar conmigo con estos cuatro simples comandos:"
-	msg += "\n\n/address te permite crear una dirección especifica para tu usuario de Telegram, la cual sirve para enviar o recibir Chauchas."
-	msg += "\n\n/balance enseña la cantidad de Chauchas que tienes dentro de esa dirección"
-	msg += "\n\nel comando /send puedes enviar Chauchas hacia otras direcciones."
-	msg += " Por ejemplo, si deseas enviarle 100 chauchas a la dirección cfBifAmAK3h9Ke4wE2auXaEbfPqeMV44GQ debes usar el comando de la siguiente manera:"
-	msg += "\n\n/send 100 cfBifAmAK3h9Ke4wE2auXaEbfPqeMV44GQ"
-	msg += "\n\ny para finalizar esta el comando /red, que resume el estado actual de la red."
+	msg = "Holi, soy Chungungo :D"
+	msg += "\nPuedes interactuar conmigo con estos simples comandos:"
+	msg += "\n\n/address te permite crear una dirección especifica para tu usuario de Telegram, la cual sirve para enviar o recibir Keplers."
+	msg += "\n\n/balance enseña la cantidad de Kepler que tienes dentro de esa dirección"
+	msg += "\n\nel comando /send puedes enviar Keplers hacia otras direcciones."
+	msg += " Por ejemplo, si deseas enviarle 100 KPL a la dirección KfBifAmAK3h9Ke4wE2auXaEbfPqeMV44GQ debes usar el comando de la siguiente manera:"
+	msg += "\n\n/send 100 KfBifAmAK3h9Ke4wE2auXaEbfPqeMV44GQ"
+	msg += "\n\nademás, puedes ver informacion de masternodes con /masternode IP"
 
 	logger.info("start(%i)" % user.id)
 	update.message.reply_text("%s" % msg)	
@@ -53,7 +53,7 @@ def send(bot, update):
 		amount = float(msgSplit[1])
 		receptor = msgSplit[2]
 
-		if not len(receptor) == 34 and receptor[0] == 'c':
+		if not len(receptor) == 34 and receptor[0] == 'K':
 			sending = "Address inválida"
 		else:
 			if not balance > amount:
@@ -75,7 +75,7 @@ def send(bot, update):
 
 
 # Dado
-def dice(bot, update):
+""" def dice(bot, update):
 	user = update.message.from_user
 	userHash = hash(user.id)
 	userAddress = getaddress(userHash)
@@ -91,37 +91,37 @@ def dice(bot, update):
 			if not bet < userBalance or not userBalance > 0.001:
 				result = "balance insuficiente"
 			else:
-				botAddress = getaddress("quirquincho")
-				botBalance = float(rpc.getbalance("quirquincho"))
+				botAddress = getaddress("chungungo")
+				botBalance = float(rpc.getbalance("chungungo"))
 
 				if not botBalance > bet:
 					result = "No tengo tantas chauchas :c"
 				else:
 					seed(repr(urandom(64)))
 					dice = randint(0,100)
-					if dice > 50:
-						result = "Ganaste %f CHA !\nNúmero: %i" % (bet, dice)
-						rpc.sendfrom("quirquincho", userAddress, bet)
+					if dice > (50 + 3):# 3% house edge
+						result = "Ganaste %f KPL !\nNúmero: %i" % (bet, dice)
+						rpc.sendfrom("chungungo", userAddress, bet)
 					else:
-						if dice == 50:
-							result = "BONUS x3 !! Ganaste %f CHA\nNúmero: 50" % (bet*3)
-							rpc.sendfrom("quirquincho", userAddress, bet*3)
+						if dice == (50 + 3):
+							result = "BONUS x3 !! Ganaste %f KPL\nNúmero: 50" % (bet*3)
+							rpc.sendfrom("chungungo", userAddress, bet*3)
 
 						else:
-							result = "Perdiste %f CHA\nNúmero: %i" % (bet, dice)
+							result = "Perdiste %f KPL\nNúmero: %i" % (bet, dice)
 							rpc.sendfrom(userHash, botAddress, bet)
 	except:
 		bet = 0.0
 		result = "syntax error\nUSO: /dado apuesta"
 	
 	logger.info("dice(%i, %f) => %s" % (user.id, bet, result))
-	update.message.reply_text("%s" % result)		
+	update.message.reply_text("%s" % result)	 """	
 
 
-# Mostrar saldo y address de Quirquincho
+# Mostrar saldo y address de chungungo
 def info(bot, update):
-	address = getaddress("quirquincho")
-	balance = float(rpc.getbalance("quirquincho"))
+	address = getaddress("chungungo")
+	balance = float(rpc.getbalance("chungungo"))
 
 	logger.info("info() => (%s, %f)" % (address, balance))
 	update.message.reply_text("Address: %s\nBalance: %f" % (address, balance))		
@@ -148,8 +148,34 @@ def balance(bot, update):
 	logger.info("balance(%i) => %f" % (user.id, balance))
 	update.message.reply_text("{0:.8f} CHA".format(balance))
 
+# Información de Masternodes
+def masternode(bot, update):
 
-# Información de la red
+	try:
+		msgSplit = update.message.text.split(" ")
+
+		address = msgSplit[1]
+
+		if len(address) > 35:
+			sending = "IP inválida"
+		else:
+			info = rpc.masternodelist('json', address)
+			info = info[status]
+			if info == "ENABLED":
+				sending = "✅ masternode activo"
+			elif info == "SENTINEL_PING_EXPIRED":
+				sending = "❌ tu masternode necesita Sentinel para funcionar"
+			else:
+				sending = "❌ hay un problema con tu masternode, revisalo"
+	except:
+		address = "invalid"
+		status = "none"
+		sending = "syntax error\nUSO: /masternode IP"
+
+	logger.info("send(%s) => %s" % (address, status))
+	update.message.reply_text("%s" % sending)		
+
+""" # Información de la red
 def red(bot, update):
 	info = rpc.getmininginfo()
 
@@ -168,7 +194,7 @@ def red(bot, update):
 
 	msg = "Bloques: %i\nDificultad: %f\nHashing Power: %f Mh/s\n\nEl siguiente bloque se creará en %s"
 
-	update.message.reply_text(msg % (blocks, difficulty, power, delta))
+	update.message.reply_text(msg % (blocks, difficulty, power, delta)) """
 
 def error(bot, update, error):
 	logger.warning('Update: "%s" - Error: "%s"', update, error)
@@ -181,8 +207,8 @@ def main():
 	rpc = AuthServiceProxy("http://%s:%s@127.0.0.1:%i"%(RPCuser, RPCpassword, RPCport))
 	updater = Updater(token)
 
-	# Creación de address para Quirquincho
-	getaddress("quirquincho")
+	# Creación de address para chungungo
+	getaddress("chungungo")
 
 	# Get the dispatcher to register handlers
 	dp = updater.dispatcher
@@ -194,8 +220,9 @@ def main():
 	dp.add_handler(CommandHandler("help", start))
 	dp.add_handler(CommandHandler("send", send))
 	dp.add_handler(CommandHandler("info", info))
-	dp.add_handler(CommandHandler("dice", dice))
-	dp.add_handler(CommandHandler("red", red))
+	#dp.add_handler(CommandHandler("dice", dice))
+	dp.add_handler(CommandHandler("masternode", masternode))
+	#dp.add_handler(CommandHandler("red", red))
 
 	# log all errors
 	dp.add_error_handler(error)
