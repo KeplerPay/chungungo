@@ -152,7 +152,7 @@ def balance(bot, update):
 def masternode(bot, update):
 
 	msgSplit = update.message.text.split(" ")
-	if len(msgSplit) == 1:
+	if len(msgSplit) == 2:
 		address = msgSplit[1]
 
 		if len(address) > 35 or len(address) < 8:
