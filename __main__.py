@@ -155,17 +155,20 @@ def masternode(bot, update):
 
 	address = msgSplit[1]
 
-	if len(address) > 35:
+	if len(address) > 35 or len(address) < 8:
 		sending = "IP inválida"
 	else:
 		info = rpc.masternodelist('json', address)
-		info = info[0]['status']
-		if info == "ENABLED":
-			sending = "✅ masternode activo"
-		elif info == "SENTINEL_PING_EXPIRED":
-			sending = "❌ tu masternode necesita Sentinel para funcionar"
+		if len(info) == 1:
+			info = list(info.values())[0]['status']
+			if info == "ENABLED":
+				sending = "✅ masternode activo"
+			elif info == "SENTINEL_PING_EXPIRED":
+				sending = "❌ tu masternode necesita Sentinel para funcionar"
+			else:
+				sending = "❌ hay un problema con tu masternode, revisalo"
 		else:
-			sending = "❌ hay un problema con tu masternode, revisalo"
+			sending = "IP inválida %s" % str(len(info))
 
 	logger.info("masternode(%s) => %s" % (address))
 	update.message.reply_text("%s" % sending)		
