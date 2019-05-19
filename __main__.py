@@ -170,7 +170,7 @@ def masternode(bot, update):
 				else:
 					sending = "❌ hay un problema con tu masternode, revisalo"
 			else:
-				sending = "IP inválida %s" % str(len(info))
+				sending = "IP inválida o no encontrada"
 
 		logger.info("masternode(%s) => %s" % (address, info))
 		update.message.reply_text("%s" % sending)
