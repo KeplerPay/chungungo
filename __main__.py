@@ -157,6 +157,7 @@ def masternode(bot, update):
 
 		if len(address) > 35 or len(address) < 8:
 			sending = "IP inválida"
+			info = "none"
 		else:
 			info = rpc.masternodelist('json', address)
 			if len(info) == 1:
