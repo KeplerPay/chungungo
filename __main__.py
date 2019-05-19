@@ -154,6 +154,8 @@ def masternode(bot, update):
 	msgSplit = update.message.text.split(" ")
 	#if len(msgSplit) == 2:
 	try:
+		if not len(msgSplit) == 2:
+			raise Exception('No IP was provided')
 		address = msgSplit[1]
 
 		if len(address) > 35 or len(address) < 8:
