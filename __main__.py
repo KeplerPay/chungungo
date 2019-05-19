@@ -160,19 +160,20 @@ def masternode(bot, update):
 			sending = "IP inválida"
 		else:
 			info = rpc.masternodelist('json', address)
-			info = info[0][status]
+			info = info[0]['status']
 			if info == "ENABLED":
 				sending = "✅ masternode activo"
 			elif info == "SENTINEL_PING_EXPIRED":
 				sending = "❌ tu masternode necesita Sentinel para funcionar"
 			else:
 				sending = "❌ hay un problema con tu masternode, revisalo"
-	except:
+	except Exception as e:
 		address = "invalid"
 		status = "none"
 		sending = "syntax error\nUSO: /masternode IP"
+		logger.error(e)
 
-	logger.info("send(%s) => %s" % (address, status))
+	logger.info("masternode(%s) => %s" % (address, status))
 	update.message.reply_text("%s" % sending)		
 
 """ # Información de la red
