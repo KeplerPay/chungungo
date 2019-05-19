@@ -151,29 +151,23 @@ def balance(bot, update):
 # Información de Masternodes
 def masternode(bot, update):
 
-	try:
-		msgSplit = update.message.text.split(" ")
+	msgSplit = update.message.text.split(" ")
 
-		address = msgSplit[1]
+	address = msgSplit[1]
 
-		if len(address) > 35:
-			sending = "IP inválida"
+	if len(address) > 35:
+		sending = "IP inválida"
+	else:
+		info = rpc.masternodelist('json', address)
+		info = info[0]['status']
+		if info == "ENABLED":
+			sending = "✅ masternode activo"
+		elif info == "SENTINEL_PING_EXPIRED":
+			sending = "❌ tu masternode necesita Sentinel para funcionar"
 		else:
-			info = rpc.masternodelist('json', address)
-			info = info[0]['status']
-			if info == "ENABLED":
-				sending = "✅ masternode activo"
-			elif info == "SENTINEL_PING_EXPIRED":
-				sending = "❌ tu masternode necesita Sentinel para funcionar"
-			else:
-				sending = "❌ hay un problema con tu masternode, revisalo"
-	except Exception as e:
-		address = "invalid"
-		status = "none"
-		sending = "syntax error\nUSO: /masternode IP"
-		logger.error(e)
+			sending = "❌ hay un problema con tu masternode, revisalo"
 
-	logger.info("masternode(%s) => %s" % (address, status))
+	logger.info("masternode(%s) => %s" % (address))
 	update.message.reply_text("%s" % sending)		
 
 """ # Información de la red
