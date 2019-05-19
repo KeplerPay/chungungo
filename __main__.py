@@ -41,7 +41,7 @@ def start(bot, update):
 	logger.info("start(%i)" % user.id)
 	update.message.reply_text("%s" % msg)	
 
-# Enviar CHA
+# Enviar KPL
 def send(bot, update):
 	user = update.message.from_user
 	userHash = hash(user.id)
@@ -95,7 +95,7 @@ def send(bot, update):
 				botBalance = float(rpc.getbalance("chungungo"))
 
 				if not botBalance > bet:
-					result = "No tengo tantas chauchas :c"
+					result = "No tengo tantas KPLuKPLs :c"
 				else:
 					seed(repr(urandom(64)))
 					dice = randint(0,100)
@@ -160,7 +160,7 @@ def masternode(bot, update):
 			sending = "IP inválida"
 		else:
 			info = rpc.masternodelist('json', address)
-			info = info[status]
+			info = info[0][status]
 			if info == "ENABLED":
 				sending = "✅ masternode activo"
 			elif info == "SENTINEL_PING_EXPIRED":
