@@ -152,7 +152,8 @@ def balance(bot, update):
 def masternode(bot, update):
 
 	msgSplit = update.message.text.split(" ")
-	if len(msgSplit) == 2:
+	#if len(msgSplit) == 2:
+	try:
 		address = msgSplit[1]
 
 		if len(address) > 35 or len(address) < 8:
@@ -172,10 +173,11 @@ def masternode(bot, update):
 				sending = "IP inválida %s" % str(len(info))
 
 		logger.info("masternode(%s) => %s" % (address, info))
-		update.message.reply_text("%s" % sending)		
-	else:
+		update.message.reply_text("%s" % sending)
+	except:		
+	#else:
 		sending = "syntax error\nUSO: /masternode IP"
-		logger.info("masternode(%s) => %s" % ("none", "none"))
+		logger.info("masternode(%s) => %s debug: %s" % ("none", "none", str((len(msgSplit) == 2)) ))
 		update.message.reply_text("%s" % sending)		
 
 """ # Información de la red
