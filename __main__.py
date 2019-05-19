@@ -152,26 +152,30 @@ def balance(bot, update):
 def masternode(bot, update):
 
 	msgSplit = update.message.text.split(" ")
+	if len(msgSplit) == 1:
+		address = msgSplit[1]
 
-	address = msgSplit[1]
-
-	if len(address) > 35 or len(address) < 8:
-		sending = "IP inválida"
-	else:
-		info = rpc.masternodelist('json', address)
-		if len(info) == 1:
-			info = list(info.values())[0]['status']
-			if info == "ENABLED":
-				sending = "✅ masternode activo"
-			elif info == "SENTINEL_PING_EXPIRED":
-				sending = "❌ tu masternode necesita Sentinel para funcionar"
-			else:
-				sending = "❌ hay un problema con tu masternode, revisalo"
+		if len(address) > 35 or len(address) < 8:
+			sending = "IP inválida"
 		else:
-			sending = "IP inválida %s" % str(len(info))
+			info = rpc.masternodelist('json', address)
+			if len(info) == 1:
+				info = list(info.values())[0]['status']
+				if info == "ENABLED":
+					sending = "✅ masternode activo"
+				elif info == "SENTINEL_PING_EXPIRED":
+					sending = "❌ tu masternode necesita Sentinel para funcionar"
+				else:
+					sending = "❌ hay un problema con tu masternode, revisalo"
+			else:
+				sending = "IP inválida %s" % str(len(info))
 
-	logger.info("masternode(%s) => %s" % (address))
-	update.message.reply_text("%s" % sending)		
+		logger.info("masternode(%s) => %s" % (address, info))
+		update.message.reply_text("%s" % sending)		
+	else:
+		sending = "syntax error\nUSO: /masternode IP"
+		logger.info("masternode(%s) => %s" % ("none", "none"))
+		update.message.reply_text("%s" % sending)		
 
 """ # Información de la red
 def red(bot, update):
